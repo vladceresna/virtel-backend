@@ -24,13 +24,3 @@ async fn login(form: rocket::serde::json::Json<Login>, auth: Auth<'_>) -> Result
 fn logout(auth: Auth<'_>) {
     auth.logout();
 }
-#[tokio::main]
-async fn main() -> Result<(), Error>{
-    let users = Users::open_sqlite("mydb.db").await?;
-
-    rocket::build()
-        .mount("/", routes![signup, login, logout])
-        .manage(users)
-        .launch();
-    Ok(())
-}

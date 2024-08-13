@@ -6,11 +6,17 @@ fn index() -> &'static str {
     "Hello, world!"
 }
 #[get("/authed")]
-fn index() -> &'static str {
+fn authed(user: User) -> &'static str {
     "Yeah! You`re authenticated!"
 }
 
+#[tokio::main]
 #[launch]
-fn rocket() -> _ {
-    rocket::build().mount("/", routes![index])
+async fn rocket() -> Result<(), Error>{
+    let users = Users::open_sqlite("mydb.db").await?;
+    rocket::build()
+    .mount("/", routes![index, signup, login, logout])
+    .manage(users)
+    .launch();
+    Ok(())
 }
