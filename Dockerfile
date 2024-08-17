@@ -6,7 +6,7 @@ ENV APP_HOME=$BUILD_HOME
 WORKDIR $APP_HOME
 COPY --chown=gradle:gradle build.gradle settings.gradle $APP_HOME/
 COPY --chown=gradle:gradle src $APP_HOME/src
-COPY --chown=gradle:gradle config $APP_HOME/config
+COPY --chown=gradle:gradle gradle $APP_HOME/gradle
 RUN gradle --no-daemon build
 FROM openjdk:17-jdk-alpine
 ARG BUILD_HOME
