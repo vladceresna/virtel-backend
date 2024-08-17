@@ -3,6 +3,7 @@ package com.vladceresna.virtel_backend.controllers;
 import com.vladceresna.virtel_backend.models.Skill;
 import com.vladceresna.virtel_backend.services.SkillsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,9 +16,15 @@ public class SkillsController {
     @Autowired
     private SkillsService skillsService;
 
+    @Value("${skills.admin.token}")
+    private String skills_admin_token;
+
     @GetMapping("/skill")
     public ResponseEntity<Skill> getSkill(@RequestParam UUID id){
-        return new ResponseEntity<>(skillsService.getSkill(id), HttpStatus.OK);
+        if(skillsService.isSkillExist(id)){
+            return new ResponseEntity<>(skillsService.getSkill(id), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/skills/all")
@@ -37,10 +44,12 @@ public class SkillsController {
         return new ResponseEntity<>(skillsService.createSkill(name, description, code, authorEmail), HttpStatus.OK);
     }
     @DeleteMapping("/skill")
-    public void deleteSkill(@RequestParam UUID id, @RequestParam UUID adminToken){
-        if (adminToken.equals(UUID.fromString(System.getenv("ADMIN_TOKEN")))) {
+    public ResponseEntity<Object> deleteSkill(@RequestParam UUID id, @RequestParam UUID adminToken){
+        if (adminToken.equals(UUID.fromString(skills_admin_token))){
             skillsService.deleteSkill(id);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
 }

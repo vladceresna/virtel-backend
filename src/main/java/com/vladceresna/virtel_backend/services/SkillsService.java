@@ -35,4 +35,7 @@ public class SkillsService {
     }
 
 
+    public boolean isSkillExist(UUID id) {
+        return skillsRepository.findById(id).isPresent();
+    }
 }
