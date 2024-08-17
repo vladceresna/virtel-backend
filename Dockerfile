@@ -1,15 +1,15 @@
-FROM gradle:7.3.1-jdk17-alpine AS build
-WORKDIR /app
-COPY build.gradle .
-COPY settings.gradle .
-COPY gradlew .
-COPY gradlew.bat .
-COPY src ./src
-RUN gradle build
+ARG BUILD_HOME=/app
 
+FROM gradle:7.3.1-jdk17-alpine as build-image
+ARG BUILD_HOME
+ENV APP_HOME=$BUILD_HOME
+WORKDIR $APP_HOME
+COPY --chown=gradle:gradle build.gradle settings.gradle $APP_HOME/
+COPY --chown=gradle:gradle src $APP_HOME/src
+COPY --chown=gradle:gradle config $APP_HOME/config
+RUN gradle --no-daemon build
 FROM openjdk:17-jdk-alpine
-WORKDIR /app
-RUN ls
-COPY --from=build /app/target/*T.jar ./app.jar
-RUN ls
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ARG BUILD_HOME
+ENV APP_HOME=$BUILD_HOME
+COPY --from=build-image $APP_HOME/build/libs/*T.jar app.jar
+ENTRYPOINT java -jar app.jar
