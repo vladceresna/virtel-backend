@@ -2,7 +2,8 @@ FROM gradle:7.3.1-jdk17-alpine AS build
 WORKDIR /app
 COPY build.gradle .
 COPY settings.gradle .
-COPY gradlew ./gradle
+COPY gradlew .
+COPY gradlew.bat .
 COPY src ./src
 RUN gradle build
 
