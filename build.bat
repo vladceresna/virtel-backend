@@ -1,0 +1,1 @@
+gradle build && java -jar build/libs/virtel-backend-0.0.1-SNAPSHOT.jar
