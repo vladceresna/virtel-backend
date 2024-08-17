@@ -1,8 +1,8 @@
-FROM maven:3.8.5-openjdk-17 AS build
+FROM gradle:7.3.1-jdk17-alpine AS build
 WORKDIR /app
-COPY pom.xml .
+COPY build.gradle .
 COPY src ./src
-RUN mvn clean install -DskipTests
+RUN gradle build
 
 FROM openjdk:17-jdk-alpine
 WORKDIR /app
