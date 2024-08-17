@@ -1,12 +1,6 @@
 FROM gradle:7.3.1-jdk17-alpine AS build
 WORKDIR /app
-COPY build.gradle .
-COPY src ./src
-RUN gradle build
-
+COPY . .
 FROM openjdk:17-jdk-alpine
-WORKDIR /app
-RUN ls
 COPY --from=build /app/target/*.jar ./app.jar
-RUN ls
-ENTRYPOINT ["java", "-jar", "app.jar"]
+ENTRYPOINT ["gradle","build","&&","java", "-jar", "app.jar"]
