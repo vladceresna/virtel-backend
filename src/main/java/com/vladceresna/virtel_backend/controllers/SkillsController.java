@@ -1,6 +1,7 @@
 package com.vladceresna.virtel_backend.controllers;
 
 import com.vladceresna.virtel_backend.models.Skill;
+import com.vladceresna.virtel_backend.models.SkillDto;
 import com.vladceresna.virtel_backend.services.SkillsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,11 +39,8 @@ public class SkillsController {
         return new ResponseEntity<>(skillsService.getSkillsOfUser(authorEmail), HttpStatus.OK);
     }
     @PostMapping("/skill")
-    public ResponseEntity<Skill> createSkill(@RequestParam String name,
-                                             @RequestParam String description,
-                                             @RequestParam String code,
-                                             @RequestParam String authorEmail){
-        return new ResponseEntity<>(skillsService.createSkill(name, description, code, authorEmail), HttpStatus.OK);
+    public ResponseEntity<Skill> createSkill(@RequestBody SkillDto skill){
+        return new ResponseEntity<>(skillsService.createSkill(skill.name(), skill.description(), skill.code(), skill.authorEmail()), HttpStatus.OK);
     }
     @DeleteMapping("/skill")
     public ResponseEntity<Object> deleteSkill(@RequestParam UUID id, @RequestParam UUID adminToken){
