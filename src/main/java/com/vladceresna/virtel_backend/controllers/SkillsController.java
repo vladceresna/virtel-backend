@@ -36,10 +36,18 @@ public class SkillsController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-
     @GetMapping("/skills/all")
     public ResponseEntity<List<Skill>> getAllSkills(){
         return new ResponseEntity<>(skillsService.getAllSkills(), HttpStatus.OK);
+    }
+
+    @GetMapping("/skills/query")
+    public ResponseEntity<List<Skill>> getSkillsByQuery(@RequestParam String query){
+        List<Skill> skillsByQuery = skillsService.getSkillsByQuery(query);
+        if(!skillsByQuery.isEmpty()){
+            return new ResponseEntity<>(skillsByQuery, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/skills")
