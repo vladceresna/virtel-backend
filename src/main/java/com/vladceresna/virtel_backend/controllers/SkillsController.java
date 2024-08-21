@@ -28,6 +28,14 @@ public class SkillsController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+    @PostMapping("/skill/like")
+    public ResponseEntity<Skill> addLike(@RequestParam UUID id){
+        if(skillsService.isSkillExist(id)){
+            return new ResponseEntity<>(skillsService.addLike(id), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
 
     @GetMapping("/skills/all")
     public ResponseEntity<List<Skill>> getAllSkills(){

@@ -25,5 +25,6 @@ public class Skill {
     private String code;
     private String authorEmail;//user
     private LocalDateTime createdTime;
+    private int likes;
 
 }

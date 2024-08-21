@@ -30,8 +30,15 @@ public class SkillsService {
                 .name(name)
                 .authorEmail(authorEmail)
                 .createdTime(LocalDateTime.now())
+                .likes(1)
                 .build());
     }
+    public Skill addLike(UUID id){
+        Skill skill = getSkill(id);
+        skill.setLikes(skill.getLikes()+1);
+        return skillsRepository.save(skill);
+    }
+
     public void deleteSkill(UUID id) {
         skillsRepository.deleteById(id);
     }
@@ -40,4 +47,6 @@ public class SkillsService {
     public boolean isSkillExist(UUID id) {
         return skillsRepository.findById(id).isPresent();
     }
+
+
 }
