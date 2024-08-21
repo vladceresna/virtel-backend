@@ -95,6 +95,7 @@ public class SkillsService {
                 }
             } else if (c == ':') {
                 lastCommand = lastWord;
+                lastWord = "";
             } else {
                 lastWord += Character.toString(c);
             }
