@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -23,5 +24,6 @@ public class Skill {
     private String description;
     private String code;
     private String authorEmail;//user
+    private LocalDateTime createdTime;
 
 }
