@@ -49,83 +49,47 @@ public class SkillsService {
         return skillsRepository.findById(id).isPresent();
     }
     /**
-     * @param query as "name:name description:description code:code creator:creator"
+     * @param query as "name code"
      *              any location
      *              can be spaces everywhere, but not after codename
      * **/
     public List<Skill> getSkillsByQuery(String query) {
         List<Skill> allSkills = getAllSkills();
-        List<Skill> result = new ArrayList<>();
-        query = query.toLowerCase().trim();
+        Skill[] preResult = new Skill[Short.MAX_VALUE];
+        int maxPreResult = Integer.MIN_VALUE;
 
-        List<String> name = new ArrayList<>();
-        List<String> description = new ArrayList<>();
-        List<String> code = new ArrayList<>();
-        List<String> authorEmail = new ArrayList<>();
-        List<String> fullSearch = new ArrayList<>();
+        String[] fullSearch = query.split(" ");
 
-
-        String lastWord = "";
-        String lastCommand = "";
-        boolean scanningParameter = true;
-        for(int x = 0;x<query.length();x++){
-            char c = query.charAt(x);
-            if (c == ' '){
-                if(lastWord.length() > 0){
-                    switch (lastCommand){
-                        case "name":
-                            name.add(lastWord);
-                            break;
-                        case "description":
-                            description.add(lastWord);
-                            break;
-                        case "code":
-                            code.add(lastWord);
-                            break;
-                        case "authorEmail":
-                            authorEmail.add(lastWord);
-                            break;
-                        default:
-                            fullSearch.add(lastWord);
-                            break;
-                    }
-                    lastWord = "";
-                    lastCommand = "";
-
-                }
-            } else if (c == ':') {
-                lastCommand = lastWord;
-                lastWord = "";
-            } else {
-                lastWord += Character.toString(c);
-            }
-        }
-
-        for (Skill skill:allSkills) {
+        for(int x = 0;x<allSkills.size();x++){
+            Skill skill = allSkills.get(x);
             int searchLevel = 0;
-            for (String contained:name) if (!skill.getName().contains(contained)) {
-                searchLevel++;//lowering in search results
+            for(String contained:fullSearch){
+                searchLevel += countOccurrences(skill.getName(),contained)
+                        + countOccurrences(skill.getDescription(),contained)
+                        + countOccurrences(skill.getCode(),contained)
+                        + countOccurrences(skill.getAuthorEmail(),contained);
             }
-            for (String contained:description) if (!skill.getDescription().contains(contained)) {
-                searchLevel++;//lowering in search results
-            }
-            for (String contained:code) if (!skill.getCode().contains(contained)) {
-                searchLevel++;//lowering in search results
-            }
-            for (String contained:authorEmail) if (!skill.getAuthorEmail().contains(contained)) {
-                searchLevel++;//lowering in search results
-            }
-            for (String contained:fullSearch)
-                if (!(skill.getName().contains(contained)
-                        || skill.getDescription().contains(contained)
-                        || skill.getCode().contains(contained)
-                        || skill.getAuthorEmail().contains(contained)
-                )) {
-                searchLevel++;//lowering in search results
-            }
-            result.add(searchLevel, skill);
-        }
+            skill.setTempSearchLevel(searchLevel);
 
+            preResult[x*searchLevel] = skill;
+            if (x*searchLevel>maxPreResult){
+                maxPreResult = x*searchLevel;
+            }
+        }
+        List<Skill> result = new ArrayList<>();
+        for (int x = maxPreResult;x>-1;x--) {
+            if(preResult[x]!=null) {
+                result.add(preResult[x]);
+            }
+        }
         return result;
+    }
+    public int countOccurrences(String text, String substring) {
+        int count = 0, fromIndex = 0;
+        while ((fromIndex = text.indexOf(substring, fromIndex)) != -1) {
+            count++;
+            fromIndex++;
+        }
+        return count;
     }
 }
